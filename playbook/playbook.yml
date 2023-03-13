@@ -70,7 +70,7 @@
               User git
               IdentitiesOnly yes
               IdentityFile={{ ssh_key_path }}
-    - name: set-url repos
+    - name: Set-url repos
       shell: git remote set-url origin git@github.com:{{ git_organization }}/{{ git_repo_name }}.git 
     - name: Clone Git repos
       shell: git clone git@github-repo-{{git_repo_name}}:{{ git_organization }}/{{ git_repo_name }}.git
