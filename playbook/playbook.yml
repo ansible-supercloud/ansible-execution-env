@@ -1,0 +1,96 @@
+---
+- name: Push BOM to Git
+  vars:
+    git_access_token: ""
+    git_organization: ""
+    git_username: ""
+    ssh_passphrase: ""
+    zip_url: ""
+  hosts: localhost
+  tasks:
+    - name: Download zip file
+      get_url:
+        url: "{{ zip_url }}"
+        dest: .
+    - name: Get Zip file details
+      find:
+        paths: "{{ playbook_dir }}"
+        patterns: "*.zip"
+        file_type: file
+      register: zip_details
+    - name: Set zip file path to a variable
+      set_fact:
+        zip_path: "{{ zip_details.files[0].path }}"
+    - name: Set repo name as zip file name
+      set_fact:
+        git_repo_name: "{{ zip_path | basename | splitext | first | trim }}"
+    - name: Create remote Git repo
+      community.general.github_repo:
+        access_token: "{{ git_access_token }}"
+        organization: "{{ git_organization }}"
+        name: "{{ git_repo_name }}"
+        description: "Super Cloud automation BOM artifact"
+        private: true
+        state: present
+        force_defaults: false
+    - name: Create SSH directory
+      ansible.builtin.file:
+        path: ~/.ssh
+        state: directory
+    - name: Set SSH key path
+      set_fact:
+        ssh_key_path: "~/.ssh/{{ git_repo_name }}"
+    - name: Generate target SSH key for accessing GitHub
+      openssh_keypair:
+        path: "{{ ssh_key_path }}"
+        type: ed25519
+        force: true
+        passphrase: "{{ ssh_passphrase }}"
+    - name: Add new deploy key
+      github_deploy_key:
+        name: "{{ git_repo_name }}"
+        key: "{{ lookup('file', '{{ ssh_key_path }}.pub') }}"
+        owner: "{{ git_organization }}"
+        repo: "{{ git_repo_name }}"
+        token: "{{ git_access_token }}"
+        force: true
+        read_only: false
+    - name: Delete local Git repo if exists
+      file:
+        path: "./{{ git_repo_name }}"
+        state: absent
+    - name: Update configuration block in ssh config file
+      ansible.builtin.blockinfile:
+        path: ~/.ssh/config
+        create: true
+        marker: "# {mark} ANSIBLE MANAGED BLOCK {{ git_repo_name }}"
+        block: |
+          Host github-repo-{{git_repo_name}}
+              HostName github.com
+              User git
+              IdentitiesOnly yes
+              IdentityFile={{ ssh_key_path }}
+    - name: set-url repos
+      shell: git remote set-url origin git@github.com:{{ git_organization }}/{{ git_repo_name }}.git 
+    - name: Clone Git repos
+      shell: git clone git@github-repo-{{git_repo_name}}:{{ git_organization }}/{{ git_repo_name }}.git
+    - name: Extract deployment zip file
+      unarchive:
+        src: "{{ zip_path }}"
+        dest: /tmp
+        list_files: yes
+      register: archive_contents
+    - name: Set path to extracted folder
+      set_fact:
+        extracted_folder_path: "/tmp/{{ archive_contents.files[0] }}"
+    - name: Copy .git from cloned repo to extracted folder
+      copy:
+        src: "/tmp/{{ git_repo_name }}/.git"
+        dest: "{{ extracted_folder_path }}"
+    - name: Push contents to remote Git repo
+      shell: |
+        cd "{{ extracted_folder_path }}"
+        git branch -M main
+        git add .
+        git commit -m "init"
+        git push -u origin main
