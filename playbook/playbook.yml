@@ -8,7 +8,7 @@
     zip_url: ""
   hosts: localhost
   tasks:
-    - name: Download zip file
+    - name: Download Zip file
       get_url:
         url: "{{ zip_url }}"
         dest: .
@@ -59,7 +59,7 @@
       file:
         path: "./{{ git_repo_name }}"
         state: absent
-    - name: Update configuration block in ssh config file
+    - name: Update SSH config
       ansible.builtin.blockinfile:
         path: ~/.ssh/config
         create: true
@@ -69,9 +69,7 @@
               HostName github.com
               IdentitiesOnly yes
               IdentityFile={{ ssh_key_path }}
-    # - name: Set-url repos 
-    #   shell: git remote set-url origin git@github.com:{{ git_organization }}/{{ git_repo_name }}.git 
-    - name: Clone Git repos
+    - name: Clone Git repo
       shell: git clone git@github-repo-{{git_repo_name}}:{{ git_organization }}/{{ git_repo_name }}.git
       environment:
         GIT_SSH_COMMAND: "ssh -i {{ ssh_key_path }} -o 'StrictHostKeyChecking no'"
@@ -80,6 +78,7 @@
         src: "{{ zip_path }}"
         dest: /tmp
         list_files: yes
+        remote_src: yes
       register: archive_contents
     - name: Set path to extracted folder
       set_fact:
