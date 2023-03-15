@@ -67,13 +67,14 @@
         block: |
           Host github-repo-{{git_repo_name}}
               HostName github.com
-              User git
               IdentitiesOnly yes
               IdentityFile={{ ssh_key_path }}
-    - name: Set-url repos
-      shell: git remote set-url origin git@github.com:{{ git_organization }}/{{ git_repo_name }}.git 
+    # - name: Set-url repos 
+    #   shell: git remote set-url origin git@github.com:{{ git_organization }}/{{ git_repo_name }}.git 
     - name: Clone Git repos
       shell: git clone git@github-repo-{{git_repo_name}}:{{ git_organization }}/{{ git_repo_name }}.git
+      environment:
+        GIT_SSH_COMMAND: "ssh -i {{ ssh_key_path }} -o 'StrictHostKeyChecking no'"
     - name: Extract deployment zip file
       unarchive:
         src: "{{ zip_path }}"
@@ -85,7 +86,7 @@
         extracted_folder_path: "/tmp/{{ archive_contents.files[0] }}"
     - name: Copy .git from cloned repo to extracted folder
       copy:
-        src: "/tmp/{{ git_repo_name }}/.git"
+        src: "{{ git_repo_name }}/.git"
         dest: "{{ extracted_folder_path }}"
     - name: Push contents to remote Git repo
       shell: |
