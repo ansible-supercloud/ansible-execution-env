@@ -79,6 +79,7 @@
         dest: /tmp
         list_files: yes
         remote_src: yes
+        extra_opts: "-o"
       register: archive_contents
     - name: Set path to extracted folder
       set_fact:
