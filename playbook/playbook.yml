@@ -73,14 +73,17 @@
       shell: git clone git@github-repo-{{git_repo_name}}:{{ git_organization }}/{{ git_repo_name }}.git
       environment:
         GIT_SSH_COMMAND: "ssh -i {{ ssh_key_path }} -o 'StrictHostKeyChecking no'"
-    - name: Extract deployment zip file
-      unarchive:
-        src: "{{ zip_path }}"
-        dest: /tmp
-        list_files: yes
-        remote_src: yes
-        extra_opts: "-o"
-      register: archive_contents
+    # - name: Extract deployment zip file
+    #   unarchive:
+    #     src: "{{ zip_path }}"
+    #     dest: /tmp
+    #     list_files: yes
+    #     remote_src: yes
+    #     extra_opts: "-o"
+    #   register: archive_contents
+    - name: Unzip file
+      shell: "unzip -o {{ zip_path }} -d /tmp"
+      become: true
     - name: Set path to extracted folder
       set_fact:
         extracted_folder_path: "/tmp/{{ archive_contents.files[0] }}"
