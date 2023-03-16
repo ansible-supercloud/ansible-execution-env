@@ -22,7 +22,7 @@ RUN yum clean all && yum update -y && \
     echo -e "[azure-cli]\nname=Azure CLI\nbaseurl=https://packages.microsoft.com/yumrepos/azure-cli\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" | tee /etc/yum.repos.d/azure-cli.repo && \
     yum install -y dnf && \
     dnf install -y azure-cli && \
-    dnf install unzip && \
+    yum install unzip && \
     python3 -m ensurepip --upgrade && \
     ansible-galaxy collection install community.general && \
     ansible-galaxy collection install community.crypto && \
