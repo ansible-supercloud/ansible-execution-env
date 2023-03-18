@@ -96,14 +96,12 @@
       git_config:
         name: user.name
         value: "{{git_username}}"
-        scope: local
       args:
         repo: git@github-repo-{{git_repo_name}}:{{ git_organization }}/{{ git_repo_name }}.git
     - name: Set Git identity
       git_config:
         name: user.email
         value: "{{git_email}}"
-        scope: local
       args:
         repo: git@github-repo-{{git_repo_name}}:{{ git_organization }}/{{ git_repo_name }}.git
     - name: Push contents to remote Git repo
