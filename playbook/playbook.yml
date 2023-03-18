@@ -4,6 +4,7 @@
     git_access_token: ""
     git_organization: ""
     git_username: ""
+    git_email: ""
     ssh_passphrase: ""
     zip_url: ""
   hosts: localhost
@@ -91,8 +92,27 @@
       copy:
         src: "{{ git_repo_name }}/.git"
         dest: "{{ extracted_folder_path }}"
+    - name: Set Git identity
+      git_config:
+        name: user.email
+        value: "{{git_email}}"
+        scope: local
+      git_config:
+        name: user.name
+        value: "{{git_username}}"
+        scope: local
+      args:
+        repo: "{{ extracted_folder_path }}"
+
+    - name: print variable
+      debug:
+        var: "{{ extracted_folder_path }}"
+    # - name: Set Git identity
+    #   become: yes
+    #   command:
+    #     cmd: "git config --global user.email {{git_username}} && git config --global user.name {{git_email}}"
     - name: Push contents to remote Git repo
-      shell: |
+      shell: 
         cd "{{ extracted_folder_path }}"
         git branch -M main
         git add .
