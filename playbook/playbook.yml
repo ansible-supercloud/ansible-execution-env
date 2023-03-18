@@ -103,14 +103,6 @@
         scope: local
       args:
         repo: "{{ extracted_folder_path }}"
-
-    - name: print variable
-      debug:
-        var: "{{ extracted_folder_path }}"
-    # - name: Set Git identity
-    #   become: yes
-    #   command:
-    #     cmd: "git config --global user.email {{git_username}} && git config --global user.name {{git_email}}"
     - name: Push contents to remote Git repo
       shell: 
         cd "{{ extracted_folder_path }}"
