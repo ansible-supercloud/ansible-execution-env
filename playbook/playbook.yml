@@ -82,9 +82,6 @@
         remote_src: yes
         extra_opts: "-o"
       register: archive_contents
-    # - name: print variable
-    #   debug:
-    #     var: "{{ zip_path }}"
     - name: Set path to extracted folder
       set_fact:
         extracted_folder_path: "/tmp/{{ archive_contents.files[0] }}"
