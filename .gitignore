@@ -1,2 +1,4 @@
 vars.yaml
 **/*.zip
+script.sh
+aap.yaml

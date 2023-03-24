@@ -5,8 +5,12 @@
     git_organization: ""
     git_username: ""
     git_email: ""
-    ssh_passphrase: ""
     zip_url: ""
+    controller_host: ""
+    controller_username: ""
+    controller_password: ""
+    playbook_template_inventory: ""
+    playbook_template_organization: ""
   hosts: localhost
   tasks:
     - name: Download Zip file
@@ -25,6 +29,7 @@
     - name: Set repo name as zip file name
       set_fact:
         git_repo_name: "{{ zip_path | basename | splitext | first | trim }}"
+        project_name: "{{ zip_path | basename | splitext | first | trim }}"
     - name: Create remote Git repo
       community.general.github_repo:
         access_token: "{{ git_access_token }}"
@@ -46,7 +51,6 @@
         path: "{{ ssh_key_path }}"
         type: ed25519
         force: true
-        passphrase: "{{ ssh_passphrase }}"
     - name: Add new deploy key
       github_deploy_key:
         name: "{{ git_repo_name }}"
@@ -110,3 +114,27 @@
         git add .
         git commit -m "init"
         git push -u origin main
+    - name: Create AAP project for each capability
+      awx.awx.project:
+        controller_host: "{{controller_host}}"
+        controller_username: "{{controller_username}}"
+        controller_password: "{{controller_password}}"
+        organization: "{{playbook_template_organization}}"
+        name: "{{ git_repo_name }}"
+        scm_type: "git"
+        scm_url: "https://github.com/{{ git_organization }}/ansible-execution-env.git"
+    - name: Create job template for each capability 
+      awx.awx.job_template:
+        controller_host: "{{controller_host}}"
+        controller_username: "{{controller_username}}"
+        controller_password: "{{controller_password}}"
+        name: "deploy-{{ git_repo_name }}"
+        inventory: "{{ playbook_template_inventory }}"
+        organization: "{{playbook_template_organization}}"
+        project: "{{ git_repo_name }}"
+        playbook: "playbook/playbook.yml"
+        credentials: "SuperCloud Git Credentials"
+        execution_environment: "SuperCloud Execution Environment"
+        validate_certs: false
+      register: create_job_template_results
+      check_mode: no

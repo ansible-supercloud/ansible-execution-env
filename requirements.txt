@@ -3,6 +3,7 @@ ansible[azure]==6.0.0a3
 ansible-core==2.13.0; python_version >= '3.8'
 applicationinsights==0.11.10
 argcomplete==1.12.3
+awx.awx
 azure-cli-core==2.34.0
 azure-cli-telemetry==1.0.6
 azure-common==1.1.11
