@@ -1,4 +1,4 @@
-FROM registry.redhat.io/ansible-automation-platform-22/ee-supported-rhel8:1.0.0
+FROM registry.redhat.io/ansible-automation-platform-23/ee-29-rhel8:1.0.0-255
 
 USER root
 
