@@ -36,7 +36,7 @@
         organization: "{{ git_organization }}"
         name: "{{ git_repo_name }}"
         description: "Super Cloud automation BOM artifact"
-        private: true
+        private: false
         state: present
         force_defaults: false
     - name: Create SSH directory
@@ -114,6 +114,7 @@
         git add .
         git commit -m "init"
         git push -u origin main
+
     - name: Create AAP project for each capability
       awx.awx.project:
         controller_host: "{{controller_host}}"
@@ -122,7 +123,7 @@
         organization: "{{playbook_template_organization}}"
         name: "{{ git_repo_name }}"
         scm_type: "git"
-        scm_url: "https://github.com/{{ git_organization }}/ansible-execution-env.git"
+        scm_url: https://github.com/{{ git_organization }}/{{ git_repo_name }}.git
     - name: Create job template for each capability 
       awx.awx.job_template:
         controller_host: "{{controller_host}}"
@@ -132,9 +133,21 @@
         inventory: "{{ playbook_template_inventory }}"
         organization: "{{playbook_template_organization}}"
         project: "{{ git_repo_name }}"
-        playbook: "playbook/playbook.yml"
-        credentials: "SuperCloud Git Credentials"
+        playbook: "playbook.yaml"
+        extra_vars:
+          zip_url: "{{ zip_url }}"
+          playbook_template_organization: "{{ playbook_template_organization }}"
+          playbook_template_inventory: "{{ playbook_template_inventory }}"
+        credentials:
+          - "SuperCloud Git Credentials"
+          - "SuperCloud AAP Credentials"
         execution_environment: "SuperCloud Execution Environment"
         validate_certs: false
       register: create_job_template_results
       check_mode: no
+    - name: Launch the job template with extra_vars
+      awx.awx.job_launch:
+        controller_host: "{{controller_host}}"
+        controller_username: "{{controller_username}}"
+        controller_password: "{{controller_password}}"
+        job_template: "deploy-{{ git_repo_name }}"
