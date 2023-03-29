@@ -26,7 +26,7 @@ RUN yum clean all && yum update -y && \
     python3 -m ensurepip --upgrade && \
     ansible-galaxy collection install community.general && \
     ansible-galaxy collection install community.crypto && \
-    ansible-galaxy collection install awx.awx
+    ansible-galaxy collection install awx.awx:21.12.0
 
 COPY requirements.txt .
 
