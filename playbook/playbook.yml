@@ -134,7 +134,7 @@
         inventory: "{{ playbook_template_inventory }}"
         organization: "{{playbook_template_organization}}"
         project: "{{ git_repo_name }}"
-        playbook: "playbook.yaml"
+        playbook: "playbook.yml"
         extra_vars:
           zip_url: "{{ zip_url }}"
           playbook_template_organization: "{{ playbook_template_organization }}"
