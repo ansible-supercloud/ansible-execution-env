@@ -142,6 +142,7 @@
         credentials:
           - "SuperCloud Git Credentials"
           - "SuperCloud AAP Credentials"
+          - "SuperCloud TF Inputs"
         execution_environment: "SuperCloud Execution Environment"
         validate_certs: false
       register: create_job_template_results
