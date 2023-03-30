@@ -124,6 +124,7 @@
         name: "{{ git_repo_name }}"
         scm_type: "git"
         scm_url: https://github.com/{{ git_organization }}/{{ git_repo_name }}.git
+        validate_certs: false
     - name: Create job template for each capability 
       awx.awx.job_template:
         controller_host: "{{controller_host}}"
