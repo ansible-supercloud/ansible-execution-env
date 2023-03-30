@@ -8,7 +8,7 @@ RUN microdnf install yum
 # Install Terraform, Azure CLI, Ansible Galaxy Collections, and OPA
 RUN yum clean all && yum update -y && \
     yum install -y yum-utils && \
-    # yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo && \
+    yum-config-manager --add-repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo && \
     yum -y install terraform && \
     # curl -L -o opa https://openpolicyagent.org/downloads/v0.40.0/opa_linux_amd64_static && \
     # chmod 755 ./opa && cp opa /bin && \
