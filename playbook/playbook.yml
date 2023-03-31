@@ -114,9 +114,6 @@
 
     - name: Create AAP project for each capability
       awx.awx.project:
-        controller_host: "{{controller_host}}"
-        controller_username: "{{controller_username}}"
-        controller_password: "{{controller_password}}"
         organization: "{{playbook_template_organization}}"
         name: "{{ git_repo_name }}"
         scm_type: "git"
@@ -124,9 +121,6 @@
         validate_certs: false
     - name: Create job template for each capability 
       awx.awx.job_template:
-        controller_host: "{{controller_host}}"
-        controller_username: "{{controller_username}}"
-        controller_password: "{{controller_password}}"
         name: "deploy-{{ git_repo_name }}"
         inventory: "{{ playbook_template_inventory }}"
         organization: "{{playbook_template_organization}}"
