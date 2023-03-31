@@ -6,9 +6,6 @@
     git_username: ""
     git_email: ""
     zip_url: ""
-    controller_host: ""
-    controller_username: ""
-    controller_password: ""
     playbook_template_inventory: ""
     playbook_template_organization: ""
   hosts: localhost
@@ -134,7 +131,7 @@
         inventory: "{{ playbook_template_inventory }}"
         organization: "{{playbook_template_organization}}"
         project: "{{ git_repo_name }}"
-        playbook: "playbook.yaml"
+        playbook: "playbook.yml"
         extra_vars:
           zip_url: "{{ zip_url }}"
           playbook_template_organization: "{{ playbook_template_organization }}"
@@ -142,13 +139,11 @@
         credentials:
           - "SuperCloud Git Credentials"
           - "SuperCloud AAP Credentials"
+          - "SuperCloud TF Inputs"
         execution_environment: "SuperCloud Execution Environment"
         validate_certs: false
       register: create_job_template_results
       check_mode: no
     - name: Launch the job template with extra_vars
       awx.awx.job_launch:
-        controller_host: "{{controller_host}}"
-        controller_username: "{{controller_username}}"
-        controller_password: "{{controller_password}}"
         job_template: "deploy-{{ git_repo_name }}"
