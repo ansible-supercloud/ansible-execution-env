@@ -6,9 +6,6 @@
     git_username: ""
     git_email: ""
     zip_url: ""
-    controller_host: ""
-    controller_username: ""
-    controller_password: ""
     playbook_template_inventory: ""
     playbook_template_organization: ""
   hosts: localhost
@@ -149,7 +146,4 @@
       check_mode: no
     - name: Launch the job template with extra_vars
       awx.awx.job_launch:
-        controller_host: "{{controller_host}}"
-        controller_username: "{{controller_username}}"
-        controller_password: "{{controller_password}}"
         job_template: "deploy-{{ git_repo_name }}"
