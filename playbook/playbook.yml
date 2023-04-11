@@ -8,12 +8,18 @@
     zip_url: ""
     playbook_template_inventory: ""
     playbook_template_organization: ""
+    supercloud_backend_token: ""
+    deployment_id: ""
   hosts: localhost
   tasks:
-    - name: Download Zip file
-      get_url:
+    - name: Download Zip file and rename to deployment ID
+      ansible.builtin.get_url:
         url: "{{ zip_url }}"
-        dest: .
+        headers:
+          Authorization: "{{ supercloud_backend_token }}"
+        unredirected_headers:
+          - Authorization
+        dest: "./{{ deployment_id }}.zip"
     - name: Get Zip file details
       find:
         paths: "{{ playbook_dir }}"
