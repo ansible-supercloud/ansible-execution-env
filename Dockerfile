@@ -23,6 +23,7 @@ RUN yum clean all && yum update -y && \
     yum install -y dnf && \
     yum install -y unzip && \
     dnf install -y azure-cli && \
+    curl -fsSL https://clis.cloud.ibm.com/install/linux | sh && \
     python3 -m ensurepip --upgrade && \
     ansible-galaxy collection install community.general && \
     ansible-galaxy collection install community.crypto && \
